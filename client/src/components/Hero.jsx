@@ -77,7 +77,7 @@ const Hero = () => {
 
       <motion.div
         style={{ scale: sectionScale, opacity: sectionOpacity }}
-        className="relative z-20 mx-auto flex min-h-[calc(100vh-86px)] w-full max-w-7xl flex-col items-center justify-between gap-8 px-4 py-8 sm:px-10 sm:py-10 lg:flex-row lg:items-center lg:gap-6 lg:px-12"
+        className="relative z-20 mx-auto flex min-h-[calc(100vh-86px)] w-full max-w-7xl flex-col items-center justify-start gap-3 px-4 py-8 sm:gap-4 sm:px-10 sm:py-10 lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:px-12"
       >
         <motion.div
           variants={textContainerVariants}
