@@ -6,7 +6,8 @@ import { useWishlist } from "../contexts/WishlistContext";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
-  const { addToCart, cartItems } = useCart();
+  const { addToCart, cartItems, increaseQuantity, decreaseQuantity } =
+    useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   const [product, setProduct] = useState(null);
@@ -65,12 +66,17 @@ const ProductDetailPage = () => {
     if (!cartItem) return true;
     return cartItem.quantity < product.stock;
   }, [product, cartItem]);
+  const reachedStock =
+    Boolean(cartItem) && product && cartItem.quantity >= product.stock;
 
   const inWishlist = isInWishlist(id);
   const averageRating = useMemo(() => {
     if (reviews.length === 0) return "No ratings yet";
 
-    const total = reviews.reduce((sum, review) => sum + Number(review.rating), 0);
+    const total = reviews.reduce(
+      (sum, review) => sum + Number(review.rating),
+      0,
+    );
     return `${(total / reviews.length).toFixed(1)} / 5`;
   }, [reviews]);
 
@@ -142,7 +148,9 @@ const ProductDetailPage = () => {
 
             <div className="mt-5 flex flex-wrap gap-2.5">
               <span className="rounded-full border border-emerald-300/30 bg-emerald-500/10 px-3 py-1 text-sm font-semibold text-emerald-200">
-                {product.stock === 0 ? "Out of Stock" : `${product.stock} in stock`}
+                {product.stock === 0
+                  ? "Out of Stock"
+                  : `${product.stock} in stock`}
               </span>
               <span className="rounded-full border border-violet-300/30 bg-violet-500/10 px-3 py-1 text-sm font-semibold text-violet-200">
                 {averageRating}
@@ -157,14 +165,39 @@ const ProductDetailPage = () => {
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
-              <button
-                type="button"
-                disabled={!canAddToCart}
-                onClick={() => addToCart(product)}
-                className="btn-primary rounded-lg px-6 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:border-slate-700 disabled:bg-slate-700 disabled:text-slate-400"
-              >
-                {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
-              </button>
+              {!cartItem ? (
+                <button
+                  type="button"
+                  disabled={!canAddToCart}
+                  onClick={() => addToCart(product)}
+                  className="btn-primary rounded-lg px-6 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:border-slate-700 disabled:bg-slate-700 disabled:text-slate-400"
+                >
+                  {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
+                </button>
+              ) : (
+                <div className="flex items-center gap-2 rounded-lg border border-slate-600/80 bg-slate-900/70 px-2 py-1.5">
+                  <button
+                    type="button"
+                    onClick={() => decreaseQuantity(product._id)}
+                    className="btn-secondary h-9 w-9 rounded-md text-lg"
+                    aria-label="Decrease quantity"
+                  >
+                    -
+                  </button>
+                  <span className="w-8 text-center text-sm font-semibold text-white">
+                    {cartItem.quantity}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => increaseQuantity(product._id)}
+                    disabled={reachedStock}
+                    className="btn-secondary h-9 w-9 rounded-md text-lg disabled:cursor-not-allowed disabled:opacity-40"
+                    aria-label="Increase quantity"
+                  >
+                    +
+                  </button>
+                </div>
+              )}
               <button
                 type="button"
                 onClick={() =>
@@ -210,52 +243,56 @@ const ProductDetailPage = () => {
           <div className="pointer-events-none absolute -right-10 bottom-0 h-28 w-28 rounded-full bg-cyan-500/10 blur-3xl" />
 
           <div className="relative">
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="section-title text-2xl text-white">Reviews</h2>
-            <span className="rounded-full border border-cyan-300/25 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-200">
-              {reviews.length} total
-            </span>
-          </div>
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="section-title text-2xl text-white">Reviews</h2>
+              <span className="rounded-full border border-cyan-300/25 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-200">
+                {reviews.length} total
+              </span>
+            </div>
 
-          <div className="mt-4 space-y-3">
-            {reviews.length === 0 && (
-              <p className="rounded-xl border border-white/10 bg-black/35 px-4 py-3 text-sm text-slate-400">
-                No reviews yet. Be the first to review this product.
-              </p>
-            )}
-            {visibleReviews.map((review) => (
-              <article
-                key={review._id}
-                className="rounded-xl border border-white/10 bg-black/45 p-4"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <p className="font-semibold text-white">{review.username}</p>
-                  <div className="flex items-center gap-1.5">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <svg
-                        key={star}
-                        viewBox="0 0 24 24"
-                        className={`h-4 w-4 ${star <= review.rating ? "fill-yellow-400 text-yellow-400" : "fill-slate-700 text-slate-700"}`}
-                        aria-hidden="true"
-                      >
-                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                      </svg>
-                    ))}
+            <div className="mt-4 space-y-3">
+              {reviews.length === 0 && (
+                <p className="rounded-xl border border-white/10 bg-black/35 px-4 py-3 text-sm text-slate-400">
+                  No reviews yet. Be the first to review this product.
+                </p>
+              )}
+              {visibleReviews.map((review) => (
+                <article
+                  key={review._id}
+                  className="rounded-xl border border-white/10 bg-black/45 p-4"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="font-semibold text-white">
+                      {review.username}
+                    </p>
+                    <div className="flex items-center gap-1.5">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <svg
+                          key={star}
+                          viewBox="0 0 24 24"
+                          className={`h-4 w-4 ${star <= review.rating ? "fill-yellow-400 text-yellow-400" : "fill-slate-700 text-slate-700"}`}
+                          aria-hidden="true"
+                        >
+                          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg>
+                      ))}
+                    </div>
                   </div>
-                </div>
-                <p className="mt-2 text-sm text-slate-300">{review.comment}</p>
-              </article>
-            ))}
-            {reviews.length > 4 && (
-              <button
-                type="button"
-                onClick={() => setShowAllReviews((prev) => !prev)}
-                className="text-sm font-semibold text-cyan-300 transition hover:text-cyan-200"
-              >
-                {showAllReviews ? "Show less" : "See all reviews"}
-              </button>
-            )}
-          </div>
+                  <p className="mt-2 text-sm text-slate-300">
+                    {review.comment}
+                  </p>
+                </article>
+              ))}
+              {reviews.length > 4 && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllReviews((prev) => !prev)}
+                  className="text-sm font-semibold text-cyan-300 transition hover:text-cyan-200"
+                >
+                  {showAllReviews ? "Show less" : "See all reviews"}
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -267,79 +304,81 @@ const ProductDetailPage = () => {
           <div className="pointer-events-none absolute -bottom-16 -left-10 h-32 w-32 rounded-full bg-cyan-500/10 blur-3xl" />
 
           <div className="relative">
-          <h2 className="section-title text-2xl text-white">Add Review</h2>
-          <p className="mt-1 text-sm text-slate-400">
-            Share your experience to help other buyers.
-          </p>
+            <h2 className="section-title text-2xl text-white">Add Review</h2>
+            <p className="mt-1 text-sm text-slate-400">
+              Share your experience to help other buyers.
+            </p>
 
-          <div className="mt-5 space-y-4">
-            <input
-              required
-              value={reviewForm.username}
-              onChange={(event) =>
-                setReviewForm((prev) => ({
-                  ...prev,
-                  username: event.target.value,
-                }))
-              }
-              type="text"
-              placeholder="Username"
-              className="field text-sm"
-            />
-            <textarea
-              required
-              value={reviewForm.comment}
-              onChange={(event) =>
-                setReviewForm((prev) => ({
-                  ...prev,
-                  comment: event.target.value,
-                }))
-              }
-              placeholder="Comment"
-              rows={4}
-              className="field text-sm"
-            />
-            <div className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.11em] text-slate-400">
-                Rating
-              </p>
-              <div className="flex items-center gap-1.5">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
-                    onClick={() => {
-                      setReviewForm((prev) => ({ ...prev, rating: star }));
-                      setRatingError("");
-                    }}
-                    className="rounded-sm p-0.5"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      className={`h-7 w-7 ${star <= reviewForm.rating ? "fill-yellow-400 text-yellow-400" : "fill-transparent text-slate-500"}`}
-                      aria-hidden="true"
+            <div className="mt-5 space-y-4">
+              <input
+                required
+                value={reviewForm.username}
+                onChange={(event) =>
+                  setReviewForm((prev) => ({
+                    ...prev,
+                    username: event.target.value,
+                  }))
+                }
+                type="text"
+                placeholder="Username"
+                className="field text-sm"
+              />
+              <textarea
+                required
+                value={reviewForm.comment}
+                onChange={(event) =>
+                  setReviewForm((prev) => ({
+                    ...prev,
+                    comment: event.target.value,
+                  }))
+                }
+                placeholder="Comment"
+                rows={4}
+                className="field text-sm"
+              />
+              <div className="space-y-2">
+                <p className="text-xs font-semibold uppercase tracking-[0.11em] text-slate-400">
+                  Rating
+                </p>
+                <div className="flex items-center gap-1.5">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
+                      onClick={() => {
+                        setReviewForm((prev) => ({ ...prev, rating: star }));
+                        setRatingError("");
+                      }}
+                      className="rounded-sm p-0.5"
                     >
-                      <path
-                        d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                      />
-                    </svg>
-                  </button>
-                ))}
+                      <svg
+                        viewBox="0 0 24 24"
+                        className={`h-7 w-7 ${star <= reviewForm.rating ? "fill-yellow-400 text-yellow-400" : "fill-transparent text-slate-500"}`}
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+                          stroke="currentColor"
+                          strokeWidth="1.8"
+                        />
+                      </svg>
+                    </button>
+                  ))}
+                </div>
+                {ratingError && (
+                  <p className="text-xs font-medium text-amber-300">
+                    {ratingError}
+                  </p>
+                )}
               </div>
-              {ratingError && (
-                <p className="text-xs font-medium text-amber-300">{ratingError}</p>
-              )}
+              <button
+                type="submit"
+                className="btn-primary rounded-lg px-5 py-2.5 text-sm font-semibold"
+              >
+                Submit Review
+              </button>
             </div>
-            <button
-              type="submit"
-              className="btn-primary rounded-lg px-5 py-2.5 text-sm font-semibold"
-            >
-              Submit Review
-            </button>
-          </div>
           </div>
         </form>
       </section>

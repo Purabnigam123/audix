@@ -5,9 +5,12 @@ import { useCart } from "../contexts/CartContext";
 import { useWishlist } from "../contexts/WishlistContext";
 
 const ProductCard = ({ product }) => {
-  const { addToCart } = useCart();
+  const { addToCart, cartItems, increaseQuantity, decreaseQuantity } =
+    useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const inWishlist = isInWishlist(product._id);
+  const cartItem = cartItems.find((item) => item.product._id === product._id);
+  const reachedStock = Boolean(cartItem) && cartItem.quantity >= product.stock;
 
   const cardRef = useRef(null);
   const isInView = useInView(cardRef, { once: true, amount: 0.28 });
@@ -59,14 +62,39 @@ const ProductCard = ({ product }) => {
         )}
 
         <div className="mt-5 flex gap-2">
-          <button
-            type="button"
-            onClick={() => addToCart(product)}
-            disabled={product.stock === 0}
-            className="btn-primary flex-1 rounded-xl px-3 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:border-slate-700 disabled:bg-slate-700 disabled:text-slate-400"
-          >
-            Add to Cart
-          </button>
+          {!cartItem ? (
+            <button
+              type="button"
+              onClick={() => addToCart(product)}
+              disabled={product.stock === 0}
+              className="btn-primary flex-1 rounded-xl px-3 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:border-slate-700 disabled:bg-slate-700 disabled:text-slate-400"
+            >
+              Add to Cart
+            </button>
+          ) : (
+            <div className="flex flex-1 items-center justify-between rounded-xl border border-slate-600/80 bg-slate-900/70 px-2 py-1.5">
+              <button
+                type="button"
+                onClick={() => decreaseQuantity(product._id)}
+                className="btn-secondary h-9 w-9 rounded-lg text-lg"
+                aria-label="Decrease quantity"
+              >
+                -
+              </button>
+              <span className="w-8 text-center text-sm font-semibold text-white">
+                {cartItem.quantity}
+              </span>
+              <button
+                type="button"
+                onClick={() => increaseQuantity(product._id)}
+                disabled={reachedStock}
+                className="btn-secondary h-9 w-9 rounded-lg text-lg disabled:cursor-not-allowed disabled:opacity-40"
+                aria-label="Increase quantity"
+              >
+                +
+              </button>
+            </div>
+          )}
           <motion.button
             type="button"
             onClick={() =>
@@ -80,7 +108,9 @@ const ProductCard = ({ product }) => {
           >
             <svg
               className={`h-6 w-6 transition-colors duration-300 ${
-                inWishlist ? "fill-red-500 text-red-500" : "fill-slate-400 text-slate-400 group-hover:text-indigo-400"
+                inWishlist
+                  ? "fill-red-500 text-red-500"
+                  : "fill-slate-400 text-slate-400 group-hover:text-indigo-400"
               }`}
               viewBox="0 0 24 24"
               aria-hidden="true"

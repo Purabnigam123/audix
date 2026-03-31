@@ -36,12 +36,34 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = (product) => {
     if (isAuthenticated) {
+      let previousCart = [];
+
+      setCartItems((prev) => {
+        previousCart = prev;
+        const existing = prev.find((item) => item.product._id === product._id);
+
+        if (!existing) {
+          if (product.stock < 1) return prev;
+          return [...prev, { product, quantity: 1 }];
+        }
+
+        if (existing.quantity >= existing.product.stock) {
+          return prev;
+        }
+
+        return prev.map((item) =>
+          item.product._id === product._id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item,
+        );
+      });
+
       addCartItemForUser(product._id)
         .then((data) => {
           setCartItems(data.cartItems || []);
         })
         .catch(() => {
-          // Keep existing state unchanged on API errors.
+          setCartItems(previousCart);
         });
       return;
     }
@@ -68,12 +90,19 @@ export const CartProvider = ({ children }) => {
 
   const removeFromCart = (productId) => {
     if (isAuthenticated) {
+      let previousCart = [];
+
+      setCartItems((prev) => {
+        previousCart = prev;
+        return prev.filter((item) => item.product._id !== productId);
+      });
+
       removeCartItemForUser(productId)
         .then((data) => {
           setCartItems(data.cartItems || []);
         })
         .catch(() => {
-          // Keep existing state unchanged on API errors.
+          setCartItems(previousCart);
         });
       return;
     }
@@ -85,12 +114,29 @@ export const CartProvider = ({ children }) => {
 
   const updateQuantity = (productId, nextQuantity) => {
     if (isAuthenticated) {
+      let previousCart = [];
+
+      setCartItems((prev) => {
+        previousCart = prev;
+
+        return prev
+          .map((item) => {
+            if (item.product._id !== productId) return item;
+            const cappedQuantity = Math.min(
+              Math.max(nextQuantity, 0),
+              item.product.stock,
+            );
+            return { ...item, quantity: cappedQuantity };
+          })
+          .filter((item) => item.quantity > 0);
+      });
+
       updateCartItemQuantityForUser(productId, nextQuantity)
         .then((data) => {
           setCartItems(data.cartItems || []);
         })
         .catch(() => {
-          // Keep existing state unchanged on API errors.
+          setCartItems(previousCart);
         });
       return;
     }

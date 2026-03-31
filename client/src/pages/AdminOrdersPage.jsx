@@ -107,10 +107,10 @@ const AdminOrdersPage = () => {
   }
 
   return (
-    <section className="surface-panel rounded-2xl p-6 !shadow-none">
-      <h1 className="section-title text-3xl text-white">Orders</h1>
+    <section className="surface-panel rounded-2xl p-4 !shadow-none sm:p-6">
+      <h1 className="section-title text-2xl text-white sm:text-3xl">Orders</h1>
       <div className="mt-4 overflow-x-auto">
-        <table className="w-full min-w-[980px] text-left text-sm">
+        <table className="w-full min-w-[720px] text-left text-sm">
           <thead>
             <tr className="text-slate-400">
               <th className="pb-3">Order ID</th>
@@ -148,7 +148,7 @@ const AdminOrdersPage = () => {
                   <td className="py-3">
                     {order.phone || order.user?.phone || "N/A"}
                   </td>
-                  <td className="py-3 max-w-[300px] truncate">
+                  <td className="max-w-[220px] py-3 truncate sm:max-w-[300px]">
                     {order.shippingAddress || order.user?.address || "N/A"}
                   </td>
                   <td className="py-3">{order.paymentMode}</td>
@@ -175,7 +175,7 @@ const AdminOrdersPage = () => {
             <button
               type="button"
               onClick={() => downloadReceipt(selectedOrder)}
-              className="btn-primary rounded-lg px-4 py-2 text-xs font-semibold"
+              className="btn-primary w-full rounded-lg px-4 py-2 text-xs font-semibold sm:w-auto"
             >
               Download Receipt (PDF)
             </button>

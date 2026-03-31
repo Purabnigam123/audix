@@ -30,12 +30,22 @@ export const WishlistProvider = ({ children }) => {
 
   const addToWishlist = (product) => {
     if (isAuthenticated) {
+      let previousItems = [];
+
+      setWishlistItems((prev) => {
+        previousItems = prev;
+        const exists = prev.some((item) => item._id === product._id);
+        if (exists) return prev;
+        return [...prev, product];
+      });
+
       toggleWishlistForUser(product._id)
         .then((data) => {
           setWishlistItems(data.wishlistItems || []);
         })
         .catch(() => {
-          // Keep existing state unchanged on API errors.
+          // Revert optimistic update if request fails.
+          setWishlistItems(previousItems);
         });
       return;
     }
@@ -49,12 +59,20 @@ export const WishlistProvider = ({ children }) => {
 
   const removeFromWishlist = (productId) => {
     if (isAuthenticated) {
+      let previousItems = [];
+
+      setWishlistItems((prev) => {
+        previousItems = prev;
+        return prev.filter((item) => item._id !== productId);
+      });
+
       toggleWishlistForUser(productId)
         .then((data) => {
           setWishlistItems(data.wishlistItems || []);
         })
         .catch(() => {
-          // Keep existing state unchanged on API errors.
+          // Revert optimistic update if request fails.
+          setWishlistItems(previousItems);
         });
       return;
     }
