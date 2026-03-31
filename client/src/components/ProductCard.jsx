@@ -4,12 +4,21 @@ import { motion, useInView } from "framer-motion";
 import { useCart } from "../contexts/CartContext";
 import { useWishlist } from "../contexts/WishlistContext";
 
+const getProductId = (productOrId) => {
+  if (!productOrId) return null;
+  if (typeof productOrId === "string") return productOrId;
+  return productOrId._id || productOrId.id || null;
+};
+
 const ProductCard = ({ product }) => {
   const { addToCart, cartItems, increaseQuantity, decreaseQuantity } =
     useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const inWishlist = isInWishlist(product._id);
-  const cartItem = cartItems.find((item) => item.product._id === product._id);
+  const productId = getProductId(product);
+  const cartItem = cartItems.find(
+    (item) => getProductId(item.product) === productId,
+  );
   const reachedStock = Boolean(cartItem) && cartItem.quantity >= product.stock;
 
   const cardRef = useRef(null);
@@ -75,7 +84,7 @@ const ProductCard = ({ product }) => {
             <div className="flex flex-1 items-center justify-between rounded-xl border border-slate-600/80 bg-slate-900/70 px-2 py-1.5">
               <button
                 type="button"
-                onClick={() => decreaseQuantity(product._id)}
+                onClick={() => decreaseQuantity(productId)}
                 className="btn-secondary h-9 w-9 rounded-lg text-lg"
                 aria-label="Decrease quantity"
               >
@@ -86,7 +95,7 @@ const ProductCard = ({ product }) => {
               </span>
               <button
                 type="button"
-                onClick={() => increaseQuantity(product._id)}
+                onClick={() => increaseQuantity(productId)}
                 disabled={reachedStock}
                 className="btn-secondary h-9 w-9 rounded-lg text-lg disabled:cursor-not-allowed disabled:opacity-40"
                 aria-label="Increase quantity"

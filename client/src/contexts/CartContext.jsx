@@ -10,6 +10,22 @@ import { useAuth } from "./AuthContext";
 
 const CartContext = createContext(null);
 
+const getProductId = (productOrId) => {
+  if (!productOrId) return null;
+  if (typeof productOrId === "string") return productOrId;
+  return productOrId._id || productOrId.id || null;
+};
+
+const getProductStock = (productOrId) => {
+  if (!productOrId || typeof productOrId === "string") return Infinity;
+  return Number.isFinite(productOrId.stock) ? productOrId.stock : Infinity;
+};
+
+const getProductPrice = (productOrId) => {
+  if (!productOrId || typeof productOrId === "string") return 0;
+  return Number(productOrId.price) || 0;
+};
+
 export const CartProvider = ({ children }) => {
   const { isAuthenticated, authLoading } = useAuth();
   const [cartItems, setCartItems] = useState([]);
@@ -35,30 +51,35 @@ export const CartProvider = ({ children }) => {
   }, [isAuthenticated, authLoading]);
 
   const addToCart = (product) => {
+    const targetProductId = getProductId(product);
+    if (!targetProductId) return;
+
     if (isAuthenticated) {
       let previousCart = [];
 
       setCartItems((prev) => {
         previousCart = prev;
-        const existing = prev.find((item) => item.product._id === product._id);
+        const existing = prev.find(
+          (item) => getProductId(item.product) === targetProductId,
+        );
 
         if (!existing) {
           if (product.stock < 1) return prev;
           return [...prev, { product, quantity: 1 }];
         }
 
-        if (existing.quantity >= existing.product.stock) {
+        if (existing.quantity >= getProductStock(existing.product)) {
           return prev;
         }
 
         return prev.map((item) =>
-          item.product._id === product._id
+          getProductId(item.product) === targetProductId
             ? { ...item, quantity: item.quantity + 1 }
             : item,
         );
       });
 
-      addCartItemForUser(product._id)
+      addCartItemForUser(targetProductId)
         .then((data) => {
           setCartItems(data.cartItems || []);
         })
@@ -69,19 +90,21 @@ export const CartProvider = ({ children }) => {
     }
 
     setCartItems((prev) => {
-      const existing = prev.find((item) => item.product._id === product._id);
+      const existing = prev.find(
+        (item) => getProductId(item.product) === targetProductId,
+      );
 
       if (!existing) {
         if (product.stock < 1) return prev;
         return [...prev, { product, quantity: 1 }];
       }
 
-      if (existing.quantity >= existing.product.stock) {
+      if (existing.quantity >= getProductStock(existing.product)) {
         return prev;
       }
 
       return prev.map((item) =>
-        item.product._id === product._id
+        getProductId(item.product) === targetProductId
           ? { ...item, quantity: item.quantity + 1 }
           : item,
       );
@@ -94,7 +117,7 @@ export const CartProvider = ({ children }) => {
 
       setCartItems((prev) => {
         previousCart = prev;
-        return prev.filter((item) => item.product._id !== productId);
+        return prev.filter((item) => getProductId(item.product) !== productId);
       });
 
       removeCartItemForUser(productId)
@@ -108,7 +131,7 @@ export const CartProvider = ({ children }) => {
     }
 
     setCartItems((prev) =>
-      prev.filter((item) => item.product._id !== productId),
+      prev.filter((item) => getProductId(item.product) !== productId),
     );
   };
 
@@ -121,10 +144,10 @@ export const CartProvider = ({ children }) => {
 
         return prev
           .map((item) => {
-            if (item.product._id !== productId) return item;
+            if (getProductId(item.product) !== productId) return item;
             const cappedQuantity = Math.min(
               Math.max(nextQuantity, 0),
-              item.product.stock,
+              getProductStock(item.product),
             );
             return { ...item, quantity: cappedQuantity };
           })
@@ -144,10 +167,10 @@ export const CartProvider = ({ children }) => {
     setCartItems((prev) =>
       prev
         .map((item) => {
-          if (item.product._id !== productId) return item;
+          if (getProductId(item.product) !== productId) return item;
           const cappedQuantity = Math.min(
             Math.max(nextQuantity, 0),
-            item.product.stock,
+            getProductStock(item.product),
           );
           return { ...item, quantity: cappedQuantity };
         })
@@ -157,7 +180,7 @@ export const CartProvider = ({ children }) => {
 
   const increaseQuantity = (productId) => {
     const item = cartItems.find(
-      (cartItem) => cartItem.product._id === productId,
+      (cartItem) => getProductId(cartItem.product) === productId,
     );
     if (!item) return;
     updateQuantity(productId, item.quantity + 1);
@@ -165,7 +188,7 @@ export const CartProvider = ({ children }) => {
 
   const decreaseQuantity = (productId) => {
     const item = cartItems.find(
-      (cartItem) => cartItem.product._id === productId,
+      (cartItem) => getProductId(cartItem.product) === productId,
     );
     if (!item) return;
     updateQuantity(productId, item.quantity - 1);
@@ -174,7 +197,7 @@ export const CartProvider = ({ children }) => {
   const totalPrice = useMemo(
     () =>
       cartItems.reduce(
-        (sum, item) => sum + item.product.price * item.quantity,
+        (sum, item) => sum + getProductPrice(item.product) * item.quantity,
         0,
       ),
     [cartItems],

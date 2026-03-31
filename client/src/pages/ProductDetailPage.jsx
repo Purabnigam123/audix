@@ -4,6 +4,12 @@ import { createReview, getProductById, getReviewsByProduct } from "../api/api";
 import { useCart } from "../contexts/CartContext";
 import { useWishlist } from "../contexts/WishlistContext";
 
+const getProductId = (productOrId) => {
+  if (!productOrId) return null;
+  if (typeof productOrId === "string") return productOrId;
+  return productOrId._id || productOrId.id || null;
+};
+
 const ProductDetailPage = () => {
   const { id } = useParams();
   const { addToCart, cartItems, increaseQuantity, decreaseQuantity } =
@@ -60,7 +66,7 @@ const ProductDetailPage = () => {
     };
   }, [isImagePreviewOpen]);
 
-  const cartItem = cartItems.find((item) => item.product._id === id);
+  const cartItem = cartItems.find((item) => getProductId(item.product) === id);
   const canAddToCart = useMemo(() => {
     if (!product || product.stock === 0) return false;
     if (!cartItem) return true;
@@ -178,7 +184,7 @@ const ProductDetailPage = () => {
                 <div className="flex items-center gap-2 rounded-lg border border-slate-600/80 bg-slate-900/70 px-2 py-1.5">
                   <button
                     type="button"
-                    onClick={() => decreaseQuantity(product._id)}
+                    onClick={() => decreaseQuantity(getProductId(product))}
                     className="btn-secondary h-9 w-9 rounded-md text-lg"
                     aria-label="Decrease quantity"
                   >
@@ -189,7 +195,7 @@ const ProductDetailPage = () => {
                   </span>
                   <button
                     type="button"
-                    onClick={() => increaseQuantity(product._id)}
+                    onClick={() => increaseQuantity(getProductId(product))}
                     disabled={reachedStock}
                     className="btn-secondary h-9 w-9 rounded-md text-lg disabled:cursor-not-allowed disabled:opacity-40"
                     aria-label="Increase quantity"
