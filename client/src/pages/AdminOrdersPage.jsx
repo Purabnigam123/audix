@@ -148,7 +148,7 @@ const AdminOrdersPage = () => {
                   <td className="py-3">
                     {order.phone || order.user?.phone || "N/A"}
                   </td>
-                  <td className="max-w-[220px] py-3 truncate sm:max-w-[300px]">
+                  <td className="max-w-[180px] py-3 truncate sm:max-w-[300px]">
                     {order.shippingAddress || order.user?.address || "N/A"}
                   </td>
                   <td className="py-3">{order.paymentMode}</td>

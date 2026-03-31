@@ -70,7 +70,7 @@ const ProductCard = ({ product }) => {
           </span>
         )}
 
-        <div className="mt-5 flex gap-2">
+        <div className="mt-5 flex flex-wrap gap-2 sm:flex-nowrap">
           {!cartItem ? (
             <button
               type="button"
@@ -113,10 +113,11 @@ const ProductCard = ({ product }) => {
             }
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            className="btn-secondary flex items-center justify-center rounded-xl px-3 py-2.5 transition-colors"
+            className="btn-secondary flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-colors"
+            aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
           >
             <svg
-              className={`h-6 w-6 transition-colors duration-300 ${
+              className={`h-5 w-5 transition-colors duration-300 ${
                 inWishlist
                   ? "fill-red-500 text-red-500"
                   : "fill-slate-400 text-slate-400 group-hover:text-indigo-400"

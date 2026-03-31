@@ -19,12 +19,14 @@ const AdminLoginPage = () => {
       localStorage.setItem(ADMIN_TOKEN_KEY, response.token);
       navigate("/admin/dashboard");
     } catch (apiError) {
-      setError(apiError?.response?.data?.message || "Invalid admin credentials");
+      setError(
+        apiError?.response?.data?.message || "Invalid admin credentials",
+      );
     }
   };
 
   return (
-    <section className="surface-panel mx-auto max-w-md rounded-2xl p-6">
+    <section className="surface-panel mx-auto max-w-md rounded-2xl p-5 sm:p-6">
       <h1 className="section-title text-3xl text-white">Admin Login</h1>
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">

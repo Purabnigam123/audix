@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
 import { useWishlist } from "../contexts/WishlistContext";
@@ -7,13 +8,6 @@ const ADMIN_TOKEN_KEY = "adminToken";
 
 const desktopLinkClass = ({ isActive }) =>
   `rounded-lg px-3 py-2 text-sm font-semibold tracking-wide transition-all duration-200 ${
-    isActive
-      ? "bg-indigo-400/15 text-white shadow-[0_0_0_1px_rgba(165,180,252,0.35)]"
-      : "text-slate-300 hover:bg-slate-800/60 hover:text-slate-100"
-  }`;
-
-const mobileLinkClass = ({ isActive }) =>
-  `rounded-md px-2 py-1.5 text-xs font-semibold tracking-wide transition-all duration-200 ${
     isActive
       ? "bg-indigo-400/15 text-white shadow-[0_0_0_1px_rgba(165,180,252,0.35)]"
       : "text-slate-300 hover:bg-slate-800/60 hover:text-slate-100"
@@ -50,25 +44,55 @@ const CartIcon = () => (
   </svg>
 );
 
+const MenuIcon = ({ open }) => (
+  <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
+    {open ? (
+      <path
+        d="M6 6l12 12M18 6L6 18"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    ) : (
+      <path
+        d="M4 7h16M4 12h16M4 17h16"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    )}
+  </svg>
+);
+
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { cartItems } = useCart();
   const { wishlistItems } = useWishlist();
   const { user, isAuthenticated } = useAuth();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const cartCount = cartItems.reduce((count, item) => count + item.quantity, 0);
   const isAdminRoute = location.pathname.startsWith("/admin");
   const isAdminLoggedIn = Boolean(localStorage.getItem(ADMIN_TOKEN_KEY));
 
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
+
   const handleAdminLogout = () => {
     localStorage.removeItem(ADMIN_TOKEN_KEY);
+    setIsMobileMenuOpen(false);
     navigate("/admin/login");
   };
 
   return (
     <header className="fixed left-0 right-0 top-0 z-50 border-b border-slate-800/70 bg-black/70 backdrop-blur-xl">
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
         <Link
           to={isAdminLoggedIn ? "/admin/dashboard" : "/"}
           className="bg-gradient-to-r from-indigo-100 to-blue-200 bg-clip-text text-xl font-black tracking-[0.2em] text-transparent"
@@ -77,18 +101,47 @@ const Navbar = () => {
         </Link>
 
         {isAdminRoute && isAdminLoggedIn ? (
-          <nav className="flex items-center gap-3">
-            <NavLink to="/admin/orders" className={desktopLinkClass}>
-              Orders
-            </NavLink>
+          <>
+            <nav className="hidden items-center gap-3 md:flex">
+              <NavLink to="/admin/orders" className={desktopLinkClass}>
+                Orders
+              </NavLink>
+              <button
+                type="button"
+                onClick={handleAdminLogout}
+                className="btn-secondary rounded-lg px-3 py-1.5 text-xs font-semibold"
+              >
+                Logout
+              </button>
+            </nav>
+
             <button
               type="button"
-              onClick={handleAdminLogout}
-              className="btn-secondary rounded-lg px-3 py-1.5 text-xs font-semibold"
+              onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-200 transition hover:bg-slate-800/70 md:hidden"
+              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isMobileMenuOpen}
             >
-              Logout
+              <MenuIcon open={isMobileMenuOpen} />
             </button>
-          </nav>
+
+            {isMobileMenuOpen ? (
+              <div className="absolute left-3 right-3 top-[calc(100%-0.5rem)] rounded-xl border border-slate-700/70 bg-black/95 p-3 shadow-2xl md:hidden">
+                <nav className="flex flex-col gap-2">
+                  <NavLink to="/admin/orders" className={desktopLinkClass}>
+                    Orders
+                  </NavLink>
+                  <button
+                    type="button"
+                    onClick={handleAdminLogout}
+                    className="btn-secondary rounded-lg px-3 py-2 text-sm font-semibold"
+                  >
+                    Logout
+                  </button>
+                </nav>
+              </div>
+            ) : null}
+          </>
         ) : (
           <>
             <nav className="hidden items-center gap-6 md:flex">
@@ -142,44 +195,58 @@ const Navbar = () => {
               )}
             </nav>
 
-            <div className="flex items-center gap-4 md:hidden">
-              <NavLink to="/products" className={mobileLinkClass}>
-                Shop
-              </NavLink>
-              <NavLink
-                to="/wishlist"
-                className={iconLinkClass}
-                aria-label="Wishlist"
-              >
-                <HeartIcon />
-                <span className="absolute -right-2 -top-2 inline-flex min-w-5 items-center justify-center rounded-full bg-slate-800 px-1.5 py-0.5 text-[10px] font-semibold text-slate-100">
-                  {wishlistItems.length}
-                </span>
-              </NavLink>
-              <NavLink to="/cart" className={iconLinkClass} aria-label="Cart">
-                <CartIcon />
-                <span className="absolute -right-2 -top-2 inline-flex min-w-5 items-center justify-center rounded-full bg-slate-800 px-1.5 py-0.5 text-[10px] font-semibold text-slate-100">
-                  {cartCount}
-                </span>
-              </NavLink>
-              {!isAuthenticated ? (
-                <>
-                  <NavLink to="/login" className={mobileLinkClass}>
-                    L
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-200 transition hover:bg-slate-800/70 md:hidden"
+              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isMobileMenuOpen}
+            >
+              <MenuIcon open={isMobileMenuOpen} />
+            </button>
+
+            {isMobileMenuOpen ? (
+              <div className="absolute left-3 right-3 top-[calc(100%-0.5rem)] rounded-xl border border-slate-700/70 bg-black/95 p-3 shadow-2xl md:hidden">
+                <nav className="flex flex-col gap-2">
+                  <NavLink to="/" className={desktopLinkClass}>
+                    Home
                   </NavLink>
-                  <NavLink to="/signup" className={mobileLinkClass}>
-                    S
+                  <NavLink to="/products" className={desktopLinkClass}>
+                    Products
                   </NavLink>
-                </>
-              ) : (
-                <NavLink
-                  to="/profile"
-                  className="rounded-md px-2 py-1.5 text-xs font-semibold tracking-wide text-cyan-200/90 transition hover:bg-cyan-400/10 hover:text-cyan-100"
-                >
-                  Me
-                </NavLink>
-              )}
-            </div>
+                  <NavLink to="/wishlist" className={desktopLinkClass}>
+                    Wishlist ({wishlistItems.length})
+                  </NavLink>
+                  <NavLink to="/cart" className={desktopLinkClass}>
+                    Cart ({cartCount})
+                  </NavLink>
+
+                  {!isAuthenticated ? (
+                    <>
+                      <NavLink
+                        to="/login"
+                        className="btn-secondary rounded-lg px-3 py-2 text-sm font-semibold"
+                      >
+                        Login
+                      </NavLink>
+                      <NavLink
+                        to="/signup"
+                        className="btn-primary rounded-lg px-3 py-2 text-sm font-semibold"
+                      >
+                        Sign Up
+                      </NavLink>
+                    </>
+                  ) : (
+                    <NavLink
+                      to="/profile"
+                      className="rounded-lg px-3 py-2 text-sm font-semibold uppercase tracking-wide text-cyan-200/90 transition hover:bg-cyan-400/10 hover:text-cyan-100"
+                    >
+                      Hi, {user?.name}
+                    </NavLink>
+                  )}
+                </nav>
+              </div>
+            ) : null}
           </>
         )}
       </div>

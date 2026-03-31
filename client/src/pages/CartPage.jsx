@@ -27,7 +27,11 @@ const CartPage = () => {
       await placeOrder(paymentMode);
       setOrderMessage("Order placed successfully.");
     } catch (error) {
-      setOrderError(error?.response?.data?.message || error?.message || "Failed to place order");
+      setOrderError(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Failed to place order",
+      );
     } finally {
       setIsPlacingOrder(false);
     }
@@ -35,7 +39,7 @@ const CartPage = () => {
 
   if (cartItems.length === 0) {
     return (
-      <section className="surface-panel rounded-2xl p-8 text-center shadow-[0_6px_16px_-14px_rgba(37,99,235,0.18)]">
+      <section className="surface-panel rounded-2xl p-6 text-center shadow-[0_6px_16px_-14px_rgba(37,99,235,0.18)] sm:p-8">
         <h1 className="section-title text-3xl text-white">
           Your Cart is Empty
         </h1>
@@ -77,7 +81,7 @@ const CartPage = () => {
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
                   onClick={() => decreaseQuantity(item.product._id)}
@@ -99,7 +103,7 @@ const CartPage = () => {
                 <button
                   type="button"
                   onClick={() => removeFromCart(item.product._id)}
-                  className="ml-2 rounded-lg bg-rose-500/20 px-3 py-2 text-xs font-semibold text-rose-300"
+                  className="rounded-lg bg-rose-500/20 px-3 py-2 text-xs font-semibold text-rose-300"
                 >
                   Remove
                 </button>
@@ -130,7 +134,7 @@ const CartPage = () => {
               type="button"
               onClick={handlePlaceOrder}
               disabled={isPlacingOrder}
-              className="btn-primary rounded-lg px-5 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+              className="btn-primary w-full rounded-lg px-5 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
             >
               {isPlacingOrder ? "Placing..." : "Place Order"}
             </button>
@@ -144,8 +148,12 @@ const CartPage = () => {
           )}
         </div>
 
-        {orderMessage && <p className="mt-3 text-sm text-emerald-300">{orderMessage}</p>}
-        {orderError && <p className="mt-3 text-sm text-rose-300">{orderError}</p>}
+        {orderMessage && (
+          <p className="mt-3 text-sm text-emerald-300">{orderMessage}</p>
+        )}
+        {orderError && (
+          <p className="mt-3 text-sm text-rose-300">{orderError}</p>
+        )}
       </div>
     </section>
   );

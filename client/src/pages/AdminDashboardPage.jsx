@@ -126,13 +126,17 @@ const AdminDashboardPage = () => {
     }
 
     try {
-      const updated = await updateProduct(editingId, {
-        name: form.name,
-        price: Number(form.price),
-        description: form.description,
-        image: form.image,
-        stock: Number(form.stock),
-      }, adminToken);
+      const updated = await updateProduct(
+        editingId,
+        {
+          name: form.name,
+          price: Number(form.price),
+          description: form.description,
+          image: form.image,
+          stock: Number(form.stock),
+        },
+        adminToken,
+      );
 
       setProducts((prev) =>
         prev.map((item) => (item._id === editingId ? updated : item)),
@@ -292,7 +296,7 @@ const AdminDashboardPage = () => {
                         alt={product.name}
                         className="h-10 w-10 rounded-md border border-white/10 object-cover"
                       />
-                      <span className="max-w-[220px] truncate text-xs text-slate-400">
+                      <span className="max-w-[160px] truncate text-xs text-slate-400 sm:max-w-[220px]">
                         {product.image?.startsWith("data:image")
                           ? "Uploaded image"
                           : product.image}
@@ -300,7 +304,7 @@ const AdminDashboardPage = () => {
                     </div>
                   </td>
                   <td className="py-3">
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                       <button
                         type="button"
                         onClick={() => startEdit(product)}

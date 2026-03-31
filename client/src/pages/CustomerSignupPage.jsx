@@ -80,7 +80,7 @@ const CustomerSignupPage = () => {
 
   return (
     <section
-      className="surface-panel mx-auto max-w-lg rounded-2xl p-6"
+      className="surface-panel mx-auto max-w-lg rounded-2xl p-5 sm:p-6"
       style={{ boxShadow: "none" }}
     >
       <h1 className="section-title text-3xl text-white">Create Account</h1>

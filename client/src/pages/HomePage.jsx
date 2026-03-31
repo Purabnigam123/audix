@@ -224,7 +224,7 @@ const HomePage = () => {
           </h3>
         </div>
 
-        <div className="space-y-12">
+        <div className="space-y-12 px-4 sm:px-0">
           {specifications.map((spec) => (
             <article
               key={spec.title}
@@ -234,14 +234,14 @@ const HomePage = () => {
                 <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-indigo-300/35 bg-indigo-400/10">
                   <SpecIcon type={spec.icon} />
                 </span>
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-indigo-200/65">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-indigo-200/65 sm:text-xs">
                   {spec.title}
                 </p>
               </div>
-              <p className="mt-4 text-2xl font-semibold text-blue-300">
+              <p className="mt-4 text-xl font-semibold text-blue-300 sm:text-2xl">
                 {spec.value}
               </p>
-              <p className="mt-4 max-w-3xl text-sm leading-loose text-slate-300/95 sm:text-base">
+              <p className="mt-4 max-w-3xl text-xs leading-loose text-slate-300/95 sm:text-sm">
                 {spec.detail}
               </p>
             </article>
@@ -305,7 +305,7 @@ const HomePage = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
               viewport={{ once: true, amount: 0.2 }}
-              className="space-y-10 pt-35"
+              className="space-y-10 pt-20 sm:pt-35"
             >
               <div className="space-y-3 text-center">
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-yellow-200/90">

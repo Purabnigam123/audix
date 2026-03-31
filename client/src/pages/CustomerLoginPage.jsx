@@ -12,7 +12,14 @@ const EyeIcon = ({ open }) => (
           stroke="currentColor"
           strokeWidth="1.8"
         />
-        <circle cx="12" cy="12" r="2.8" fill="none" stroke="currentColor" strokeWidth="1.8" />
+        <circle
+          cx="12"
+          cy="12"
+          r="2.8"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+        />
       </>
     ) : (
       <>
@@ -67,7 +74,7 @@ const CustomerLoginPage = () => {
 
   return (
     <section
-      className="surface-panel relative mx-auto max-w-md overflow-hidden rounded-3xl border border-indigo-300/25 bg-gradient-to-br from-slate-900/88 via-slate-950/92 to-black/95 p-6"
+      className="surface-panel relative mx-auto max-w-md overflow-hidden rounded-3xl border border-indigo-300/25 bg-gradient-to-br from-slate-900/88 via-slate-950/92 to-black/95 p-5 sm:p-6"
       style={{ boxShadow: "none" }}
     >
       <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-indigo-300/50 to-transparent" />
@@ -121,7 +128,10 @@ const CustomerLoginPage = () => {
 
         <p className="mt-4 text-sm text-slate-400">
           New customer?{" "}
-          <Link to="/signup" className="font-semibold text-indigo-200 hover:text-indigo-100">
+          <Link
+            to="/signup"
+            className="font-semibold text-indigo-200 hover:text-indigo-100"
+          >
             Create an account
           </Link>
         </p>

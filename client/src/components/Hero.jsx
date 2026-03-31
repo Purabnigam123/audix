@@ -77,14 +77,14 @@ const Hero = () => {
 
       <motion.div
         style={{ scale: sectionScale, opacity: sectionOpacity }}
-        className="relative z-20 mx-auto flex min-h-[calc(100vh-86px)] w-full max-w-7xl flex-col items-center justify-between gap-8 px-6 py-10 sm:px-10 lg:flex-row lg:items-center lg:gap-6 lg:px-12"
+        className="relative z-20 mx-auto flex min-h-[calc(100vh-86px)] w-full max-w-7xl flex-col items-center justify-between gap-8 px-4 py-8 sm:px-10 sm:py-10 lg:flex-row lg:items-center lg:gap-6 lg:px-12"
       >
         <motion.div
           variants={textContainerVariants}
           initial="hidden"
           animate="visible"
           style={{ opacity: heroTextOpacity, y: heroTextY }}
-          className="flex w-full max-w-xl flex-col items-start lg:w-[42%]"
+          className="mt-4 flex w-full max-w-xl flex-col items-center text-center lg:mt-0 lg:w-[42%] lg:items-start lg:text-left"
         >
           <motion.h1
             variants={textItemVariants}
@@ -121,7 +121,7 @@ const Hero = () => {
             opacity: imageOpacity,
             rotate: imageRotate,
           }}
-          className="relative flex w-full items-center justify-end lg:w-[58%]"
+          className="relative flex w-full items-center justify-center lg:w-[58%] lg:justify-end"
         >
           <motion.img
             src="/images/hero.png"
@@ -138,7 +138,7 @@ const Hero = () => {
                 delay: 1.05,
               },
             }}
-            className="relative z-20 w-[125%] max-w-none object-contain drop-shadow-[0_20px_30px_rgba(2,6,23,0.55)] lg:w-[145%] lg:-mr-65"
+            className="relative z-20 w-[124%] max-w-none object-contain drop-shadow-[0_20px_30px_rgba(2,6,23,0.55)] sm:w-[128%] lg:w-[145%] lg:-mr-65"
           />
         </motion.div>
 

@@ -82,12 +82,12 @@ const ProfilePage = () => {
 
   return (
     <section className="space-y-8">
-      <div className="relative overflow-hidden rounded-3xl border border-indigo-300/20 bg-gradient-to-br from-slate-900/80 via-slate-950/90 to-black/95 p-6 shadow-[0_10px_24px_-20px_rgba(37,99,235,0.24)] sm:p-8">
+      <div className="relative overflow-hidden rounded-3xl border border-indigo-300/20 bg-gradient-to-br from-slate-900/80 via-slate-950/90 to-black/95 p-5 shadow-[0_10px_24px_-20px_rgba(37,99,235,0.24)] sm:p-8">
         <div className="pointer-events-none absolute -right-14 -top-14 h-36 w-36 rounded-full bg-blue-500/15 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-16 left-10 h-36 w-36 rounded-full bg-indigo-500/15 blur-3xl" />
 
         <div className="relative">
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <p className="inline-flex rounded-full border border-indigo-300/30 bg-indigo-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-indigo-200/90">
                 Account Settings
@@ -187,7 +187,7 @@ const ProfilePage = () => {
               <button
                 type="submit"
                 disabled={saving}
-                className="btn-primary rounded-lg px-6 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+                className="btn-primary w-full rounded-lg px-6 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
               >
                 {saving ? "Saving..." : "Save Changes"}
               </button>
@@ -209,7 +209,7 @@ const ProfilePage = () => {
                 <Link
                   key={item._id}
                   to={`/products/${item._id}`}
-                  className="flex items-center justify-between rounded-xl border border-white/10 bg-black/35 p-3 transition hover:border-indigo-300/35"
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-white/10 bg-black/35 p-3 transition hover:border-indigo-300/35"
                 >
                   <span className="text-sm font-semibold text-slate-100">
                     {item.name}
@@ -236,7 +236,7 @@ const ProfilePage = () => {
                   key={order.id}
                   className="rounded-xl border border-white/10 bg-black/35 p-3"
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="text-sm font-semibold text-slate-100">
                       Order #{order.id.slice(-6)}
                     </p>

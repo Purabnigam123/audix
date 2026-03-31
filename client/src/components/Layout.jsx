@@ -11,8 +11,8 @@ const Layout = ({ children }) => {
         <div className="subtle-grid absolute inset-0 opacity-15" />
       </div>
       <Navbar />
-      <div className="h-[88px]" />
-      <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
+      <div className="h-[80px] sm:h-[88px]" />
+      <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 px-3 py-6 sm:px-6 sm:py-8 lg:px-8">
         {children}
       </main>
       <Footer />
