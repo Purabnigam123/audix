@@ -7,17 +7,17 @@ import { useAuth } from "../contexts/AuthContext";
 const ADMIN_TOKEN_KEY = "adminToken";
 
 const desktopLinkClass = ({ isActive }) =>
-  `rounded-lg px-3 py-2 text-sm font-semibold tracking-wide transition-all duration-200 ${
+  `rounded-full px-4 py-1.5 text-sm font-semibold tracking-wide transition-all duration-300 border ${
     isActive
-      ? "bg-indigo-400/15 text-white shadow-[0_0_0_1px_rgba(165,180,252,0.35)]"
-      : "text-slate-300 hover:bg-slate-800/60 hover:text-slate-100"
+      ? "bg-gradient-to-r from-indigo-500/15 to-blue-500/15 text-white shadow-[0_0_12px_-2px_rgba(99,102,241,0.25)] border-indigo-500/35"
+      : "text-slate-300 hover:bg-slate-800/60 hover:text-slate-100 border-transparent"
   }`;
 
 const iconLinkClass = ({ isActive }) =>
-  `relative inline-flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-200 ${
+  `relative inline-flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 border ${
     isActive
-      ? "bg-indigo-400/15 text-white shadow-[0_0_0_1px_rgba(165,180,252,0.35)]"
-      : "text-slate-300 hover:bg-slate-800/60 hover:text-slate-100"
+      ? "bg-gradient-to-r from-indigo-500/15 to-blue-500/15 text-white shadow-[0_0_12px_-2px_rgba(99,102,241,0.25)] border-indigo-500/35"
+      : "text-slate-300 hover:bg-slate-800/60 hover:text-slate-100 border-transparent hover:scale-105"
   }`;
 
 const HeartIcon = () => (
@@ -91,11 +91,11 @@ const Navbar = () => {
   };
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 border-b border-slate-800/70 bg-black/70 backdrop-blur-xl">
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
+    <header className="fixed left-0 right-0 top-0 z-50 px-4 py-4 pointer-events-none md:px-8">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between relative rounded-2xl border border-slate-800/80 bg-black/60 backdrop-blur-xl px-4 py-3 sm:px-6 sm:py-4 lg:px-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] pointer-events-auto">
         <Link
           to={isAdminLoggedIn ? "/admin/dashboard" : "/"}
-          className="bg-gradient-to-r from-indigo-100 to-blue-200 bg-clip-text text-xl font-black tracking-[0.2em] text-transparent"
+          className="bg-gradient-to-r from-indigo-100 to-blue-200 bg-clip-text text-xl font-black tracking-[0.2em] text-transparent transition-transform duration-300 hover:scale-102"
         >
           AUDIX
         </Link>
@@ -126,7 +126,7 @@ const Navbar = () => {
             </button>
 
             {isMobileMenuOpen ? (
-              <div className="absolute left-3 right-3 top-[calc(100%-0.5rem)] rounded-xl border border-slate-700/70 bg-black/95 p-3 shadow-2xl md:hidden">
+              <div className="absolute left-0 right-0 top-[calc(100%+0.5rem)] rounded-2xl border border-slate-800 bg-black/95 backdrop-blur-2xl p-4 shadow-[0_16px_40px_rgba(0,0,0,0.85)] md:hidden">
                 <nav className="flex flex-col gap-2">
                   <NavLink to="/admin/orders" className={desktopLinkClass}>
                     Orders
@@ -172,13 +172,13 @@ const Navbar = () => {
                 <>
                   <NavLink
                     to="/login"
-                    className="btn-secondary rounded-lg px-3 py-1.5 text-xs font-semibold"
+                    className="btn-secondary rounded-full px-4 py-1.5 text-xs font-semibold"
                   >
                     Login
                   </NavLink>
                   <NavLink
                     to="/signup"
-                    className="btn-primary rounded-lg px-3 py-1.5 text-xs font-semibold"
+                    className="btn-primary rounded-full px-4 py-1.5 text-xs font-semibold"
                   >
                     Sign Up
                   </NavLink>
@@ -187,7 +187,7 @@ const Navbar = () => {
                 <div className="flex items-center">
                   <NavLink
                     to="/profile"
-                    className="rounded-lg px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-cyan-200/90 transition hover:bg-cyan-400/10 hover:text-cyan-100"
+                    className="rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-cyan-200/90 transition hover:bg-cyan-400/10 hover:text-cyan-100"
                   >
                     Hi, {user?.name}
                   </NavLink>
@@ -206,7 +206,7 @@ const Navbar = () => {
             </button>
 
             {isMobileMenuOpen ? (
-              <div className="absolute left-3 right-3 top-[calc(100%-0.5rem)] rounded-xl border border-slate-700/70 bg-black/95 p-3 shadow-2xl md:hidden">
+              <div className="absolute left-0 right-0 top-[calc(100%+0.5rem)] rounded-2xl border border-slate-800 bg-black/95 backdrop-blur-2xl p-4 shadow-[0_16px_40px_rgba(0,0,0,0.85)] md:hidden">
                 <nav className="flex flex-col gap-2">
                   <NavLink to="/" className={desktopLinkClass}>
                     Home
@@ -225,13 +225,13 @@ const Navbar = () => {
                     <>
                       <NavLink
                         to="/login"
-                        className="btn-secondary rounded-lg px-3 py-2 text-sm font-semibold"
+                        className="btn-secondary rounded-full px-4 py-2 text-sm font-semibold"
                       >
                         Login
                       </NavLink>
                       <NavLink
                         to="/signup"
-                        className="btn-primary rounded-lg px-3 py-2 text-sm font-semibold"
+                        className="btn-primary rounded-full px-4 py-2 text-sm font-semibold"
                       >
                         Sign Up
                       </NavLink>
@@ -239,7 +239,7 @@ const Navbar = () => {
                   ) : (
                     <NavLink
                       to="/profile"
-                      className="rounded-lg px-3 py-2 text-sm font-semibold uppercase tracking-wide text-cyan-200/90 transition hover:bg-cyan-400/10 hover:text-cyan-100"
+                      className="rounded-full px-4 py-2 text-sm font-semibold uppercase tracking-wide text-cyan-200/90 transition hover:bg-cyan-400/10 hover:text-cyan-100"
                     >
                       Hi, {user?.name}
                     </NavLink>

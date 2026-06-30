@@ -252,20 +252,20 @@ const HomePage = () => {
       <motion.section
         ref={sectionRef}
         style={{ y: sectionY, opacity: sectionOpacity }}
-        className="space-y-6"
+        className="space-y-8"
       >
         <motion.div
           style={{ y: headingY }}
-          className="flex flex-wrap items-end justify-between gap-5"
+          className="flex flex-wrap items-end justify-between gap-6"
         >
-          <div className="space-y-1.5">
-            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-400">
               Curated Picks
             </p>
-            <h2 className="section-title text-3xl text-white sm:text-4xl">
+            <h2 className="section-title bg-gradient-to-r from-white via-indigo-100 to-slate-200 bg-clip-text text-3xl font-extrabold text-transparent sm:text-4xl">
               Featured Products
             </h2>
-            <p className="max-w-2xl text-sm leading-relaxed text-slate-300/90 sm:text-base">
+            <p className="max-w-2xl text-xs leading-relaxed text-slate-400 sm:text-sm">
               Designed for creators, commuters, and audiophiles. Handpicked
               models with premium comfort and tuned sound.
             </p>
@@ -273,15 +273,23 @@ const HomePage = () => {
 
           <Link
             to="/products"
-            className="inline-flex items-center gap-2 border-b border-slate-600 pb-1 text-sm font-semibold text-slate-200 transition hover:border-slate-300 hover:text-white"
+            className="group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-300 transition-colors duration-300 hover:text-indigo-200"
           >
-            Explore Catalog
-            <span aria-hidden="true">→</span>
+            <span className="relative pb-0.5">
+              Explore Catalog
+              <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-indigo-400 to-cyan-400 transition-all duration-300 group-hover:w-full" />
+            </span>
+            <span
+              className="transition-transform duration-300 group-hover:translate-x-1.5"
+              aria-hidden="true"
+            >
+              →
+            </span>
           </Link>
         </motion.div>
 
         {loading ? (
-          <div className="rounded-2xl border border-slate-700/60 bg-slate-950/55 p-6 text-sm text-slate-400">
+          <div className="rounded-2xl border border-slate-800/80 bg-slate-950/55 p-6 text-sm text-slate-500">
             Loading featured products...
           </div>
         ) : (
@@ -291,7 +299,7 @@ const HomePage = () => {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.22 }}
-              className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
             >
               {featured.map((product) => (
                 <motion.div key={product._id} variants={itemVariants}>
